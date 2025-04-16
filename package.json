@@ -4,7 +4,7 @@
     "main": "index.js",
     "scripts": {
         "dev": "vite",
-        "dev-css": "postcss src/style.css -o public/style.css -w",
+        "dev-css": "postcss style.css -o public/style.css -w",
         "build": "vite build"
     },
     "keywords": [],
