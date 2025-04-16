@@ -62,25 +62,33 @@ async function renderPokemon(page) {
                     const spriteUrl = pokemon.sprites.front_default;
                     const types = pokemon.types;
                     const name = element.name;
+                    const weight = pokemon.weight;
+                    const height = pokemon.height;
 
-                    return { id, name, spriteUrl, types };
+                    return { id, name, spriteUrl, types, weight, height };
                 })
             );
-            pokemonDetails.forEach(({ id, name, spriteUrl, types }) => {
+            pokemonDetails.forEach(({ id, name, spriteUrl, types, weight, height }) => {
                 // Pokemon Card
                 const pokemon_card = document.createElement('div');
                 const a = document.createAttribute('class');
                 a.value =
-                    'w-36 lg:w-72 h-48 lg:h-72 py-5 rounded-2xl outline outline-offset-[-1px] outline-black inline-flex flex-col justify-center items-center';
+                    'w-36 lg:w-72 h-48 lg:h-72 p-5 rounded-2xl outline inline-flex flex-col justify-center items-center hover:rotate-y-180 transform-3d transition-transform duration-350';
                 pokemon_card.setAttributeNode(a);
                 const b = document.createAttribute('id');
                 b.value = `pokemon-${id}`;
                 pokemon_card.setAttributeNode(b);
 
+                // Front Card
+                const front_card = document.createElement('div');
+                const i = document.createAttribute('class');
+                i.value = 'backface-hidden flex flex-col justify-center items-center';
+                front_card.setAttributeNode(i);
+
                 // Sprite
                 const pokemon_sprite = document.createElement('img');
                 const c = document.createAttribute('class');
-                c.value = 'flex-auto';
+                c.value = 'flex-auto w-full';
                 pokemon_sprite.setAttributeNode(c);
                 const d = document.createAttribute('id');
                 d.value = `pokemon-${id}-sprite`;
@@ -121,9 +129,30 @@ async function renderPokemon(page) {
                     pokemon_types.appendChild(pokemon_type);
                 });
 
-                pokemon_card.appendChild(pokemon_sprite);
-                pokemon_card.appendChild(pokemon_name);
-                pokemon_card.appendChild(pokemon_types);
+                front_card.appendChild(pokemon_sprite);
+                front_card.appendChild(pokemon_name);
+                front_card.appendChild(pokemon_types);
+                pokemon_card.appendChild(front_card);
+
+                // Back Card
+                const back_card = document.createElement('div');
+                const j = document.createAttribute('class');
+                j.value =
+                    'backface-hidden flex flex-col justify-center items-center rotate-y-180 absolute top-0 bottom-0 right-0 left-0 p-5';
+                back_card.setAttributeNode(j);
+
+                // Pokemon Height
+                const heightInFeet = Math.floor(height * 0.328084); // Convert decimeters to feet
+                const heightInInches = Math.round((height * 0.328084 - heightInFeet) * 12); // Remaining inches
+                const height_foot = `${heightInFeet}`;
+                const height_inch = heightInInches < 10 ? `0${heightInInches}` : `${heightInInches}`;
+
+                // Pokemon Weight
+                const weight_kg = weight * 0.1;
+
+                back_card.innerHTML = `${height_foot[0]}' ${height_inch}" ${weight_kg} kg`;
+
+                pokemon_card.appendChild(back_card);
                 pokemons.appendChild(pokemon_card);
             });
         }
